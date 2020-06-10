@@ -7,9 +7,9 @@ bool _initialized = false;
 class LogConsole extends StatefulWidget {
   final bool dark;
   final bool showCloseButton;
-  final ValueChanged<OutputCallback> registerOutput;
+  static ValueChanged<OutputCallback> _registerOutput;
 
-  LogConsole({this.dark = false, this.showCloseButton = false,this.registerOutput})
+  LogConsole({this.dark = false, this.showCloseButton = false})
       : assert(_initialized, "Please call LogConsole.init() first.");
 
   static void init({int bufferSize = 20,ValueChanged<OutputCallback> registerOutput}) {
@@ -67,7 +67,7 @@ class _LogConsoleState extends State<LogConsole> {
       _refreshFilter();
     };
 
-    widget.registerOutput?.call(_callback);
+    LogConsole._registerOutput?.call(_callback);
 
     _scrollController.addListener(() {
       if (!_scrollListenerEnabled) return;
