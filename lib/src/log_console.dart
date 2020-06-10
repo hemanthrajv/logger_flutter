@@ -7,16 +7,17 @@ bool _initialized = false;
 class LogConsole extends StatefulWidget {
   final bool dark;
   final bool showCloseButton;
+  final ValueChanged<OutputCallback> registerOutput;
 
-  LogConsole({this.dark = false, this.showCloseButton = false})
+  LogConsole({this.dark = false, this.showCloseButton = false,this.registerOutput})
       : assert(_initialized, "Please call LogConsole.init() first.");
 
-  static void init({int bufferSize = 20}) {
+  static void init({int bufferSize = 20,ValueChanged<OutputCallback> registerOutput}) {
     if (_initialized) return;
 
     _bufferSize = bufferSize;
     _initialized = true;
-    Logger.addOutputListener((e) {
+    registerOutput?.call((e) {
       if (_outputEventBuffer.length == bufferSize) {
         _outputEventBuffer.removeFirst();
       }
@@ -66,7 +67,7 @@ class _LogConsoleState extends State<LogConsole> {
       _refreshFilter();
     };
 
-    Logger.addOutputListener(_callback);
+    widget.registerOutput?.call(_callback);
 
     _scrollController.addListener(() {
       if (!_scrollListenerEnabled) return;
@@ -310,7 +311,7 @@ class _LogConsoleState extends State<LogConsole> {
 
   @override
   void dispose() {
-    Logger.removeOutputListener(_callback);
+    // Logger.removeOutputListener(_callback);
     super.dispose();
   }
 }
